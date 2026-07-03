@@ -1,2 +1,4 @@
-numpy
-Pillow
+numpy==2.3.2
+Pillow==11.3.0
+pytest==8.3.4
+pytest-json-ctrf==0.3.5
