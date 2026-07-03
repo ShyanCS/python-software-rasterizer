@@ -30,9 +30,10 @@ def triangle_setup(triangle: Triangle, width: int, height: int):
 
     # Compute bounding box, clamped to framebuffer bounds
     min_x = max(0, int(np.floor(min(p0[0], p1[0], p2[0]))))
-    max_x = min(width - 1, int(np.ceil(max(p0[0], p1[0], p2[0]))))
+    max_x = min(width - 1, int(np.floor(max(p0[0], p1[0], p2[0]))))
     min_y = max(0, int(np.floor(min(p0[1], p1[1], p2[1]))))
-    max_y = min(height - 1, int(np.ceil(max(p0[1], p1[1], p2[1]))))
+    max_y = min(height - 1, int(np.floor(max(p0[1], p1[1], p2[1]))))
+
 
     return (min_x, max_x, min_y, max_y), area
 
