@@ -58,19 +58,6 @@ def reference_outputs(tmp_path_factory):
         }
     return results
 
-def test_output_is_deterministic():
-    """Instruction requires identical output across repeated executions;
-    re-run the renderer and confirm byte-identical results."""
-    import subprocess, tempfile
-    rerun_dir = tempfile.mkdtemp()
-    env = os.environ.copy()
-    env["OUTPUT_DIR"] = rerun_dir
-    subprocess.run([sys.executable, "main.py"], cwd=RENDERER_DIR, env=env, check=True)
-
-    for name in ["colored_cube.png", "textured_plane.png", "overlapping_meshes.png", "adjacent_triangles.png"]:
-        first = np.array(Image.open(os.path.join(OUTPUT_DIR, name)))
-        second = np.array(Image.open(os.path.join(rerun_dir, name)))
-        assert np.array_equal(first, second), f"{name}: output differs between repeated runs"
 
 def test_scene_files_present():
     """Sanity check: the expected scene definitions exist in the environment."""
@@ -101,6 +88,22 @@ def test_output_image_is_valid(output_name):
     assert img.mode == "RGB", f"{output_name} has unexpected mode {img.mode}, expected RGB"
     arr = np.array(img.convert("RGB"))
     assert np.isfinite(arr).all(), f"{output_name} contains non-finite pixel values"
+
+
+def test_output_is_deterministic():
+    """Instruction requires identical output across repeated executions;
+    re-run the renderer and confirm byte-identical results."""
+    import subprocess
+    import tempfile
+    rerun_dir = tempfile.mkdtemp()
+    env = os.environ.copy()
+    env["OUTPUT_DIR"] = rerun_dir
+    subprocess.run([sys.executable, "main.py"], cwd=RENDERER_DIR, env=env, check=True)
+
+    for name in ["colored_cube.png", "textured_plane.png", "overlapping_meshes.png", "adjacent_triangles.png"]:
+        first = np.array(Image.open(os.path.join(OUTPUT_DIR, name)))
+        second = np.array(Image.open(os.path.join(rerun_dir, name)))
+        assert np.array_equal(first, second), f"{name}: output differs between repeated runs"
 
 
 @pytest.mark.parametrize(

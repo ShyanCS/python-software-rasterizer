@@ -4,7 +4,7 @@ import numpy as np
 
 
 class PerspectiveCorrectInterpolation:
-    """Default InterpolationStrategy ΓÇö perspective-correct interpolation using 1/w."""
+    """Default InterpolationStrategy — perspective-correct interpolation using 1/w."""
 
     def interpolate(
         self,

@@ -5,7 +5,7 @@ from pipeline_types import Fragment, RenderTarget
 
 
 class LinearDepthReconstruction:
-    """Default DepthStrategy ΓÇö linearly interpolates depth in screen space."""
+    """Default DepthStrategy — linearly interpolates depth in screen space."""
 
     def reconstruct(
         self,
