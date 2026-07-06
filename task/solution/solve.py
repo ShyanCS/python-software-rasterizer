@@ -1,7 +1,7 @@
 """Oracle reference solution.
 
 Repairs the CPU software renderer by restoring correct implementations
-of the coverage, perspective-interpolation, and depth-reconstruction
+of the coverage, interpolation, and depth-reconstruction
 stages, then re-renders every scene to /app/output/.
 """
 

@@ -18,13 +18,13 @@ from clipping import clipping
 from geometry import triangle_setup, EdgeFunctionCoverage
 from rasterizer import rasterization
 from shaders import fragment_shading
-from depth import depth_test, framebuffer_write, LinearDepthReconstruction
-from interpolation import PerspectiveCorrectInterpolation
+from depth import depth_test, framebuffer_write, DefaultDepthStrategy
+from interpolation import DefaultInterpolationStrategy
 
 # Default pipeline strategies — replace these to swap algorithms.
 _default_coverage = EdgeFunctionCoverage()
-_default_depth = LinearDepthReconstruction()
-_default_interpolation = PerspectiveCorrectInterpolation()
+_default_depth = DefaultDepthStrategy()
+_default_interpolation = DefaultInterpolationStrategy()
 
 
 def render_scene(
@@ -40,8 +40,7 @@ def render_scene(
     The optional *coverage*, *depth_reconstruct*, and *interpolation*
     parameters accept strategy objects that satisfy the corresponding
     protocols defined in ``pipeline_types``.  When ``None`` (the
-    default), the built-in edge-function coverage, linear depth
-    reconstruction, and perspective-correct interpolation are used.
+    default), the built-in default strategies are used.
     """
     coverage = coverage or _default_coverage
     depth_reconstruct = depth_reconstruct or _default_depth

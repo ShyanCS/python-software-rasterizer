@@ -4,8 +4,8 @@ import numpy as np
 from pipeline_types import Fragment, RenderTarget
 
 
-class LinearDepthReconstruction:
-    """Default DepthStrategy — linearly interpolates depth in screen space."""
+class DefaultDepthStrategy:
+    """Default depth reconstruction strategy."""
 
     def reconstruct(
         self,

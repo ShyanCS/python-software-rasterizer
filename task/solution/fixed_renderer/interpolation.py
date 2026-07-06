@@ -1,10 +1,10 @@
-"""Perspective-correct attribute interpolation."""
+"""Attribute interpolation."""
 
 import numpy as np
 
 
-class PerspectiveCorrectInterpolation:
-    """Default InterpolationStrategy — perspective-correct interpolation using 1/w."""
+class DefaultInterpolationStrategy:
+    """Default interpolation strategy implementation."""
 
     def interpolate(
         self,
@@ -29,7 +29,7 @@ class PerspectiveCorrectInterpolation:
         return numerator / denominator
 
     def _compute_reciprocals(self, w0: float, w1: float, w2: float):
-        """Compute the reciprocal clip-space w values for each vertex."""
+        """Compute per-vertex weight factors."""
         return 1.0 / w0, 1.0 / w1, 1.0 / w2
 
     def _compute_weighted_numerator(
@@ -38,7 +38,7 @@ class PerspectiveCorrectInterpolation:
         reciprocal_w0: float, reciprocal_w1: float, reciprocal_w2: float,
         barycentric: np.ndarray,
     ) -> np.ndarray:
-        """Compute the barycentric-weighted sum of (attribute / w)."""
+        """Compute the weighted attribute numerator."""
         return (barycentric[0] * attr0 * reciprocal_w0 +
                 barycentric[1] * attr1 * reciprocal_w1 +
                 barycentric[2] * attr2 * reciprocal_w2)
@@ -48,7 +48,7 @@ class PerspectiveCorrectInterpolation:
         reciprocal_w0: float, reciprocal_w1: float, reciprocal_w2: float,
         barycentric: np.ndarray,
     ) -> float:
-        """Compute the barycentric-weighted sum of (1 / w) for normalization."""
+        """Compute the normalization denominator."""
         return (barycentric[0] * reciprocal_w0 +
                 barycentric[1] * reciprocal_w1 +
                 barycentric[2] * reciprocal_w2)
