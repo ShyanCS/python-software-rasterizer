@@ -14,5 +14,3 @@ After repairing the renderer, rendering all provided scenes must produce these o
 Each output must be a valid PNG in RGB format, with dimensions matching the corresponding scene's camera width and height. Rendering must be deterministic: repeated executions with the same inputs must produce identical outputs.
 
 The generated images will be compared against reference renderings on a per-pixel, per-channel basis, using an absolute tolerance of approximately 0.004 — tight enough to allow for standard 8-bit rounding, but not to hide an incorrect implementation. Superficial approaches such as post-processing rendered images, hardcoding outputs, or special-casing individual scenes are not acceptable. The renderer itself must be corrected so that all provided scenes render correctly.
-
-You have 3600 seconds to complete this task. Do not cheat by using online solutions or hints specific to this task.
