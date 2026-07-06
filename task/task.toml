@@ -1,38 +1,37 @@
 artifacts = []  # paths the verifier reads from the agent (e.g. ["/app/output.json"]) — must be above the first [section]
 
 [task]
-name = "dynamo/your-task-name"  # required format: org/name (Harbor needs the slash); name part lowercase kebab-case, <=3 words
-description = ""                 # one-line summary of the task
+name = "dynamo/software-renderer-repair"
+description = "Repair a CPU software rasterizer with interacting mathematical defects so its output matches a reference renderer."
 
 [metadata]
 # --- Pre-seeded for you when this repo was created — DO NOT EDIT ---
-category = "Games Puzzles and Interactive Simulation"                      # diversity category, assigned to your task by the Dynamo team
-subcategory = "Rendering graphics"                   # diversity subcategory, assigned by the Dynamo team
+category = "Games Puzzles and Interactive Simulation"
+subcategory = "Rendering graphics"
 # --- Fixed for this dataset — LEAVE AS-IS ---
-model_tested = "Opus-4.8"           # difficulty-benchmarking model (do not change)
-agent_tested = "Terminus-2"        # difficulty-benchmarking agent (do not change)
+model_tested = "Opus-4.8"
+agent_tested = "Terminus-2"
 # --- You fill these in ---
-# task_objective / artifact_type: pick from .dynamo/diversity-taxonomy.toml (lowercase snake_case).
-task_objective = []                # e.g. ["implement", "debug"]
-artifact_type = []                 # e.g. ["codebase", "configuration_file"]
-expert_time_estimate_hours = 0     # best-case hours for a focused domain expert with the intended insight
-difficulty_explanation = ""        # why this task is hard for agents and humans
-solution_explanation = ""          # high-level approach and key insights
-verification_explanation = ""      # how the tests verify correctness
+task_objective = ["debug", "fix"]
+artifact_type = ["codebase", "generated_output_artifact"]
+expert_time_estimate_hours = 6
+difficulty_explanation = "The renderer contains three defects affecting different stages of the rendering pipeline. While each defect has its own observable symptoms, the resulting rendering errors compound, so correcting only part of the pipeline is insufficient to reproduce the reference output. Each defect produces output that is visually plausible on its own — a slightly cracked edge, a subtly warped texture, a marginally shifted occlusion boundary — so none of them announce themselves as obviously wrong, and casual visual inspection is not sufficient to detect or diagnose them. Because the defects sit in different, independent stages, fixing any subset still leaves the output numerically wrong on every scene, so an agent cannot stop after finding a single plausible-looking bug. Correctly diagnosing each defect requires understanding the underlying rendering mathematics (projective geometry, perspective-correct interpolation, and rasterization fill rules) well enough to identify which computed quantity is wrong and why, rather than pattern-matching against a known bug signature. The images have been artificially created but crafted to emulate realistic rendering scenarios involving overlap, camera angle, and textured surfaces — precisely the type of test case that a graphics programmer would run when verifying a rasterization engine. And while the class of bugs demonstrated here is an illustration of the types of bugs found in the wild during the process of engineering graphics rendering engines for games and CAD systems."
+solution_explanation = "The solution restores correctness in three areas of the rendering pipeline: rasterization coverage, perspective-correct attribute interpolation, and depth reconstruction. The renderer must consistently apply the appropriate mathematical formulation at each stage so that geometry coverage, interpolated attributes, and visibility all match the reference implementation. The required fixes are localized to the rendering pipeline and preserve the existing architecture."
+verification_explanation = "The verifier renders all four provided scenes independently using a known-correct copy of the rendering pipeline that is not present in the agent's environment, using the same scene and asset files available to the agent. It then compares the agent's output images against these reference renderings on a per-pixel, per-channel basis in normalized [0,1] space, using a small absolute tolerance sufficient to accommodate normal floating-point rounding differences. This tolerance is significantly smaller than the pixel deviations introduced by any of the intentional rendering defects, so an incomplete fix does not satisfy verification. The verifier also checks that all required output files exist, are valid decodable PNG images with finite pixel values, and have dimensions matching each scene's declared camera resolution before performing the pixel comparisons."
 
 [verifier]
-timeout_sec = 120.0                # increase based on your test suite's runtime demands
+timeout_sec = 180.0
 # Canonical TB2: the verifier runs in the environment image (no separate tests/Dockerfile).
 # Harbor overlays tests/ at verify time; leave environment_mode unset for this shared model.
 
 [agent]
-timeout_sec = 120.0                # raise for hard tasks — agents may run for many minutes or hours
+timeout_sec = 3600.0
 
 [environment]
-build_timeout_sec = 600.0          # max seconds for the Docker build
-cpus = 1                           # increase for parallel/compute-heavy workloads
-memory_mb = 2048                   # increase for large datasets or in-memory processing
-storage_mb = 10240                 # increase for tasks with large files or build artifacts
-gpus = 0                           # max 1, expect H100
-allow_internet = true              # open internet is available to the agent
-mcp_servers = []                   # optional MCP servers to expose to the agent
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
+gpus = 0
+allow_internet = true
+mcp_servers = []
