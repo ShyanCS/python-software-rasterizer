@@ -19,7 +19,7 @@ from PIL import Image
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REFERENCE_DIR = os.path.join(TESTS_DIR, "reference_renderer")
 RENDERER_DIR = "/app/renderer"
-SCENES_DIR = os.path.join(RENDERER_DIR, "scenes")
+SCENES_DIR = os.path.join(REFERENCE_DIR, "scenes")
 OUTPUT_DIR = "/app/output"
 
 # Pixel-value tolerance in [0, 1] normalized space. The pipeline is fully
@@ -40,7 +40,7 @@ def _scene_files():
 
 def _render_reference(scene_path, out_dir):
     scene_def = reference_load_scene(scene_path)
-    reference_render_scene(scene_def, RENDERER_DIR, out_dir)
+    reference_render_scene(scene_def, REFERENCE_DIR, out_dir)
     return scene_def.output, scene_def.camera.width, scene_def.camera.height
 
 
