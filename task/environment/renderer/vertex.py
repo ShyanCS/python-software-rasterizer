@@ -42,5 +42,5 @@ def perspective_divide(triangle: Triangle):
     for vertex in triangle.as_list():
         cp = vertex.clip_position
         w = cp[3]
-        vertex.clip_w = w
+        vertex.clip_w = 1.0 / w
         vertex.ndc_position = np.array([cp[0] / w, cp[1] / w, cp[2] / w], dtype=np.float64)

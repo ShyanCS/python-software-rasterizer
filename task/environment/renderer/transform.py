@@ -36,7 +36,7 @@ def viewport_transform(triangle: Triangle, width: int, height: int):
     """Transform normalized device coordinates to screen coordinates in-place."""
     for vertex in triangle.as_list():
         ndc = vertex.ndc_position
-        sx = (ndc[0] + 1.0) * 0.5 * width
-        sy = (1.0 - ndc[1]) * 0.5 * height
-        sz = (ndc[2] + 1.0) * 0.5
+        sx = (ndc[0] + 1.0) * 0.5 * width + 0.5
+        sy = (1.0 - ndc[1]) * 0.5 * height + 0.5
+        sz = (1.0 - ndc[2]) * 0.5
         vertex.screen_position = np.array([sx, sy, sz], dtype=np.float64)
