@@ -15,7 +15,7 @@
             "transform": {
                 "scale": [2.0, 1.0, 2.0]
             },
-            "generate_texture": "checkerboard",
+            "texture_file": "assets/directional.png",
             "default_color": [1.0, 1.0, 1.0]
         }
     ],

@@ -14,7 +14,7 @@ SOLUTION_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXED_DIR = os.path.join(SOLUTION_DIR, "fixed_renderer")
 RENDERER_DIR = "/app/renderer"
 
-FIXED_FILES = ["geometry.py", "interpolation.py", "depth.py", "rasterizer.py", "vertex.py"]
+FIXED_FILES = ["geometry.py", "vertex.py", "depth.py", "rasterizer.py"]
 
 
 def main():

@@ -37,8 +37,7 @@ def rasterization(
         p0, p1, p2, area, bbox
     ):
         depth_value = depth_reconstruct.reconstruct(
-            p0[2], p1[2], p2[2], barycentric,
-            triangle.v0.clip_w, triangle.v1.clip_w, triangle.v2.clip_w,
+            p0[2], p1[2], p2[2], barycentric
         )
 
         texcoord = interpolation.interpolate(

@@ -47,7 +47,12 @@ def depth_test(render_target: RenderTarget, fragment: Fragment) -> bool:
 
 
 def framebuffer_write(render_target: RenderTarget, fragment: Fragment, color: np.ndarray):
-    """Write the fragment color and depth to the render target."""
+    """Write the fragment color and depth to the render target with atmospheric fog."""
     x, y = fragment.screen_x, fragment.screen_y
+
+    fog_factor = np.clip(fragment.depth_value, 0.0, 1.0)
+    fog_color = np.array([0.8, 0.8, 0.9], dtype=np.float64)
+    final_color = color * (1.0 - fog_factor) + fog_color * fog_factor
+
     render_target.depth[y, x] = fragment.depth_value
-    render_target.color[y, x] = np.clip(color, 0.0, 1.0)
+    render_target.color[y, x] = np.clip(final_color, 0.0, 1.0)

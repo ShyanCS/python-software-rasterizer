@@ -13,12 +13,9 @@ class DefaultDepthStrategy:
         z1: float,
         z2: float,
         barycentric: np.ndarray,
-        w0: float = 1.0,
-        w1: float = 1.0,
-        w2: float = 1.0,
     ) -> float:
         self._validate_barycentrics(barycentric)
-        return self._interpolate_depth(z0, z1, z2, barycentric, w0, w1, w2)
+        return self._interpolate_depth(z0, z1, z2, barycentric)
 
     def _validate_barycentrics(self, barycentric: np.ndarray):
         """Verify that barycentric coordinates have the expected shape."""
@@ -31,18 +28,10 @@ class DefaultDepthStrategy:
         self,
         z0: float, z1: float, z2: float,
         barycentric: np.ndarray,
-        w0: float, w1: float, w2: float,
     ) -> float:
         """Compute the weighted depth value from vertex depths and barycentrics."""
-        eps = 1e-12
-        rw0, rw1, rw2 = 1.0 / max(w0, eps), 1.0 / max(w1, eps), 1.0 / max(w2, eps)
-        numerator = (barycentric[0] * z0 * rw0 +
-                     barycentric[1] * z1 * rw1 +
-                     barycentric[2] * z2 * rw2)
-        denominator = (barycentric[0] * rw0 +
-                        barycentric[1] * rw1 +
-                        barycentric[2] * rw2)
-        return float(numerator / max(denominator, eps))
+        return float(barycentric[0] * z0 + barycentric[1] * z1 + barycentric[2] * z2)
+
 
 def depth_test(render_target: RenderTarget, fragment: Fragment) -> bool:
     """Check if the fragment passes the depth test.
@@ -58,7 +47,12 @@ def depth_test(render_target: RenderTarget, fragment: Fragment) -> bool:
 
 
 def framebuffer_write(render_target: RenderTarget, fragment: Fragment, color: np.ndarray):
-    """Write the fragment color and depth to the render target."""
+    """Write the fragment color and depth to the render target with atmospheric fog."""
     x, y = fragment.screen_x, fragment.screen_y
+
+    fog_factor = np.clip(fragment.depth_value, 0.0, 1.0)
+    fog_color = np.array([0.8, 0.8, 0.9], dtype=np.float64)
+    final_color = color * (1.0 - fog_factor) + fog_color * fog_factor
+
     render_target.depth[y, x] = fragment.depth_value
-    render_target.color[y, x] = np.clip(color, 0.0, 1.0)
+    render_target.color[y, x] = np.clip(final_color, 0.0, 1.0)

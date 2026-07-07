@@ -38,12 +38,9 @@ def vertex_processing(
     return Triangle(vertices[0], vertices[1], vertices[2])
 
 def perspective_divide(triangle: Triangle):
-    """Convert clip-space coordinates to NDC and prepare vertex attributes."""
+    """Convert clip space coordinates to normalized device coordinates in-place."""
     for vertex in triangle.as_list():
         cp = vertex.clip_position
         w = cp[3]
         vertex.clip_w = w
         vertex.ndc_position = np.array([cp[0] / w, cp[1] / w, cp[2] / w], dtype=np.float64)
-        vertex.texcoord = vertex.texcoord / w
-        vertex.color = vertex.color / w
-
