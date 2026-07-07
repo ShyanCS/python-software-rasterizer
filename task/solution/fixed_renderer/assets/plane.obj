@@ -1,0 +1,16 @@
+# Plane lying on the XZ plane (Y = 0)
+# 4 vertices, 4 texture coordinates, 2 triangular faces
+# Normal points up (+Y), counter-clockwise winding from above
+
+v -1.0  0.0  1.0
+v  1.0  0.0  1.0
+v  1.0  0.0 -1.0
+v -1.0  0.0 -1.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+f 1/1 2/2 3/3
+f 1/1 3/3 4/4
