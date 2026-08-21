@@ -1,7 +1,8 @@
 """Geometry setup and default coverage strategy for rasterization."""
 
+from typing import Iterator, Tuple
+
 import numpy as np
-from typing import Tuple, Iterator
 from pipeline_types import Triangle
 
 

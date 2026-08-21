@@ -47,3 +47,21 @@ python src/renderer/main.py
 # Render a specific scene to a custom directory
 python src/renderer/main.py --scene src/renderer/scenes/01_colored_cube.json --outdir my_renders
 ```
+
+## Docker
+
+You can also run the renderer in an isolated container using Docker Compose. The `output/` directory will be mounted automatically:
+
+```bash
+# Build and run the renderer to process all scenes
+docker compose up
+```
+
+## Testing and CI
+
+This repository uses GitHub Actions for continuous integration. The CI pipeline checks code formatting (using `black` and `ruff`) and runs the test suite.
+
+To run tests locally with coverage:
+```bash
+pytest --cov=src/renderer --cov-report=term-missing tests/
+```

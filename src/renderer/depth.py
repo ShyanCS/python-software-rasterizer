@@ -20,13 +20,13 @@ class DefaultDepthStrategy:
     def _validate_barycentrics(self, barycentric: np.ndarray):
         """Verify that barycentric coordinates have the expected shape."""
         if barycentric.shape != (3,):
-            raise ValueError(
-                f"Expected barycentric shape (3,), got {barycentric.shape}"
-            )
+            raise ValueError(f"Expected barycentric shape (3,), got {barycentric.shape}")
 
     def _interpolate_depth(
         self,
-        z0: float, z1: float, z2: float,
+        z0: float,
+        z1: float,
+        z2: float,
         barycentric: np.ndarray,
     ) -> float:
         """Compute the weighted depth value from vertex depths and barycentrics."""

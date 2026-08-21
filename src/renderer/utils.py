@@ -1,6 +1,7 @@
 """Utility functions for the software renderer."""
 
 import os
+
 import numpy as np
 
 

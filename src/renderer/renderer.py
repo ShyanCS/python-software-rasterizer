@@ -3,23 +3,31 @@
 Orchestrates the full graphics pipeline.
 """
 
+import logging
 import os
-import numpy as np
 
-from math3d import mat4_multiply
+import numpy as np
 from camera import look_at, perspective
-from mesh import Mesh
-from texture import Texture
-from scene import SceneDefinition, SceneMeshEntry
-from pipeline_types import RenderTarget
-from transform import build_model_matrix, viewport_transform
-from vertex import vertex_processing, perspective_divide
 from clipping import clipping
-from geometry import triangle_setup, EdgeFunctionCoverage
-from rasterizer import rasterization
-from shaders import fragment_shading
-from depth import depth_test, framebuffer_write, DefaultDepthStrategy
+from depth import DefaultDepthStrategy, depth_test, framebuffer_write
+from geometry import EdgeFunctionCoverage, triangle_setup
 from interpolation import DefaultInterpolationStrategy
+from math3d import mat4_multiply
+from mesh import Mesh
+from pipeline_types import RenderTarget
+from rasterizer import rasterization
+from scene import SceneDefinition, SceneMeshEntry
+from shaders import fragment_shading
+from texture import Texture
+from transform import build_model_matrix, viewport_transform
+from vertex import perspective_divide, vertex_processing
+
+
+class RenderError(Exception):
+    """Custom exception for rendering errors."""
+
+    pass
+
 
 # Default pipeline strategies — replace these to swap algorithms.
 _default_coverage = EdgeFunctionCoverage()
@@ -58,14 +66,19 @@ def render_scene(
 
     for mesh_entry in scene.meshes:
         _render_mesh(
-            mesh_entry, view_proj, render_target, base_path,
-            coverage, depth_reconstruct, interpolation,
+            mesh_entry,
+            view_proj,
+            render_target,
+            base_path,
+            coverage,
+            depth_reconstruct,
+            interpolation,
         )
 
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, scene.output)
     render_target.save_png(output_path)
-    print(f"  Saved: {output_path}")
+    logging.info(f"Saved: {output_path}")
 
 
 def _render_mesh(
@@ -79,7 +92,10 @@ def _render_mesh(
 ):
     """Render a single mesh entry from the scene definition."""
     obj_path = os.path.join(base_path, mesh_entry.obj_file)
-    mesh = Mesh.load_obj(obj_path)
+    try:
+        mesh = Mesh.load_obj(obj_path)
+    except Exception as e:
+        raise RenderError(f"Failed to load mesh '{obj_path}': {e}")
 
     model_matrix = build_model_matrix(mesh_entry.transform)
     mvp = mat4_multiply(view_proj, model_matrix)
@@ -87,8 +103,11 @@ def _render_mesh(
     texture = None
     if mesh_entry.texture_file:
         tex_path = os.path.join(base_path, mesh_entry.texture_file)
-        texture = Texture.load(tex_path)
-    elif mesh_entry.generate_texture == 'checkerboard':
+        try:
+            texture = Texture.load(tex_path)
+        except Exception as e:
+            raise RenderError(f"Failed to load texture '{tex_path}': {e}")
+    elif mesh_entry.generate_texture == "checkerboard":
         texture = Texture.generate_checkerboard()
 
     num_vertices = len(mesh.positions)
@@ -103,12 +122,7 @@ def _render_mesh(
     for v_indices, vt_indices in mesh.faces:
         # 1. Vertex Processing
         triangle = vertex_processing(
-            mesh.positions,
-            mesh.texcoords,
-            vertex_colors,
-            v_indices,
-            vt_indices,
-            mvp
+            mesh.positions, mesh.texcoords, vertex_colors, v_indices, vt_indices, mvp
         )
 
         # 2. Clipping
@@ -127,8 +141,12 @@ def _render_mesh(
             if bbox is not None:
                 # 6. Rasterization (coverage + depth + interpolation)
                 for fragment in rasterization(
-                    tri, bbox, area,
-                    coverage, depth_reconstruct, interpolation,
+                    tri,
+                    bbox,
+                    area,
+                    coverage,
+                    depth_reconstruct,
+                    interpolation,
                 ):
                     # 7. Fragment Shading
                     color = fragment_shading(fragment, texture)
