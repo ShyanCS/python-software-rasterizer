@@ -20,7 +20,8 @@ def test_render_all_scenes(tmp_path):
         render_scene(scene_def, str(renderer_dir), str(tmp_path))
 
         # Verify output png exists
-        # In the original task, the output file names were defined in the scenes or hardcoded in `renderer.py`.
+        # In the original task, the output file names were defined in the scenes
+        # or hardcoded in `renderer.py`.
         # Let's just check that at least one png was created.
 
     png_files = list(tmp_path.glob("*.png"))
