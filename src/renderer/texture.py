@@ -30,7 +30,7 @@ class Texture:
         self.height, self.width = data.shape[:2]
 
     @staticmethod
-    def load(filepath: str) -> 'Texture':
+    def load(filepath: str) -> "Texture":
         """Load a texture from an image file (PNG, JPEG, etc.).
 
         Args:
@@ -39,17 +39,18 @@ class Texture:
         Returns:
             A Texture instance with the loaded image data.
         """
-        img = Image.open(filepath).convert('RGB')
+        img = Image.open(filepath).convert("RGB")
         data = np.array(img)
         return Texture(data)
 
     @staticmethod
     def generate_checkerboard(
-        width: int = 64, height: int = 64,
+        width: int = 64,
+        height: int = 64,
         cell_size: int = 8,
         color_a: tuple = (200, 200, 200),
-        color_b: tuple = (50, 50, 50)
-    ) -> 'Texture':
+        color_b: tuple = (50, 50, 50),
+    ) -> "Texture":
         """Generate a deterministic checkerboard pattern texture.
 
         Creates an alternating grid of two colors. The pattern is fully

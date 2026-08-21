@@ -5,8 +5,9 @@ texture coordinates (vt), and triangular faces (f). Materials and
 normals are not supported.
 """
 
-import numpy as np
 from typing import List, Tuple
+
+import numpy as np
 
 
 class Mesh:
@@ -25,7 +26,7 @@ class Mesh:
         self.faces: List[Tuple[List[int], List[int]]] = []
 
     @staticmethod
-    def load_obj(filepath: str) -> 'Mesh':
+    def load_obj(filepath: str) -> "Mesh":
         """Load a mesh from a Wavefront OBJ file.
 
         Parses vertex positions (v), texture coordinates (vt), and
@@ -43,35 +44,31 @@ class Mesh:
         """
         mesh = Mesh()
 
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             for line in f:
                 line = line.strip()
-                if not line or line.startswith('#'):
+                if not line or line.startswith("#"):
                     continue
 
                 parts = line.split()
                 prefix = parts[0]
 
-                if prefix == 'v' and len(parts) >= 4:
+                if prefix == "v" and len(parts) >= 4:
                     x = float(parts[1])
                     y = float(parts[2])
                     z = float(parts[3])
-                    mesh.positions.append(
-                        np.array([x, y, z], dtype=np.float64)
-                    )
+                    mesh.positions.append(np.array([x, y, z], dtype=np.float64))
 
-                elif prefix == 'vt' and len(parts) >= 3:
+                elif prefix == "vt" and len(parts) >= 3:
                     u = float(parts[1])
                     v = float(parts[2])
-                    mesh.texcoords.append(
-                        np.array([u, v], dtype=np.float64)
-                    )
+                    mesh.texcoords.append(np.array([u, v], dtype=np.float64))
 
-                elif prefix == 'f':
+                elif prefix == "f":
                     v_indices = []
                     vt_indices = []
                     for vert_str in parts[1:]:
-                        components = vert_str.split('/')
+                        components = vert_str.split("/")
                         v_idx = int(components[0]) - 1
                         v_indices.append(v_idx)
                         if len(components) > 1 and components[1]:

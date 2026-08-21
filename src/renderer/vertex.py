@@ -1,9 +1,11 @@
 """Vertex processing and projection transformations."""
 
-import numpy as np
-from math3d import vec3_to_vec4, mat4_transform_vec4
-from pipeline_types import Triangle, Vertex
 from typing import List
+
+import numpy as np
+from math3d import mat4_transform_vec4, vec3_to_vec4
+from pipeline_types import Triangle, Vertex
+
 
 def vertex_processing(
     positions: List[np.ndarray],
@@ -11,7 +13,7 @@ def vertex_processing(
     vertex_colors: List[np.ndarray],
     v_indices: list,
     vt_indices: list,
-    mvp: np.ndarray
+    mvp: np.ndarray,
 ) -> Triangle:
     """Transform vertices to clip space and construct a Triangle."""
     vertices = []
@@ -27,15 +29,11 @@ def vertex_processing(
 
         color = vertex_colors[vi].copy()
 
-        vertex = Vertex(
-            position=pos.copy(),
-            texcoord=tc,
-            color=color,
-            clip_position=clip_pos
-        )
+        vertex = Vertex(position=pos.copy(), texcoord=tc, color=color, clip_position=clip_pos)
         vertices.append(vertex)
-        
+
     return Triangle(vertices[0], vertices[1], vertices[2])
+
 
 def perspective_divide(triangle: Triangle):
     """Convert clip space coordinates to normalized device coordinates in-place."""

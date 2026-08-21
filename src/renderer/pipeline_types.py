@@ -1,19 +1,22 @@
 """Explicit data structures for the graphics pipeline."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Optional, Tuple, Iterator, Protocol, runtime_checkable
+from typing import Iterator, Optional, Protocol, Tuple, runtime_checkable
+
 import numpy as np
 from PIL import Image
-
 
 # ---------------------------------------------------------------------------
 # Core data structures
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class CameraParameters:
     """Camera configuration for a scene."""
+
     eye: np.ndarray
     target: np.ndarray
     up: np.ndarray
@@ -23,12 +26,14 @@ class CameraParameters:
     width: int
     height: int
 
+
 @dataclass
 class Vertex:
     """Represents a vertex and its attributes as it flows through the pipeline."""
+
     position: np.ndarray  # Object or world space position (vec3 or vec4)
     texcoord: np.ndarray  # (u, v) texture coordinates
-    color: np.ndarray     # (r, g, b) vertex color in [0, 1]
+    color: np.ndarray  # (r, g, b) vertex color in [0, 1]
 
     # Set during vertex processing (clip space)
     clip_position: Optional[np.ndarray] = None
@@ -40,9 +45,11 @@ class Vertex:
     # Set during viewport transform (screen space)
     screen_position: Optional[np.ndarray] = None
 
+
 @dataclass
 class Triangle:
     """Represents a triangle composed of three vertices."""
+
     v0: Vertex
     v1: Vertex
     v2: Vertex
@@ -50,9 +57,11 @@ class Triangle:
     def as_list(self):
         return [self.v0, self.v1, self.v2]
 
+
 @dataclass
 class Fragment:
     """Represents a single pixel fragment during rasterization."""
+
     screen_x: int
     screen_y: int
     barycentric: np.ndarray
@@ -78,13 +87,14 @@ class RenderTarget:
 
     def save_png(self, filepath: str):
         data = (np.clip(self.color, 0.0, 1.0) * 255).astype(np.uint8)
-        img = Image.fromarray(data, 'RGB')
+        img = Image.fromarray(data, "RGB")
         img.save(filepath)
 
 
 # ---------------------------------------------------------------------------
 # Pipeline stage protocols
 # ---------------------------------------------------------------------------
+
 
 @runtime_checkable
 class CoverageStrategy(Protocol):
@@ -102,8 +112,7 @@ class CoverageStrategy(Protocol):
         p2: np.ndarray,
         area: float,
         bbox: Tuple[int, int, int, int],
-    ) -> Iterator[Tuple[int, int, np.ndarray]]:
-        ...
+    ) -> Iterator[Tuple[int, int, np.ndarray]]: ...
 
 
 @runtime_checkable
@@ -116,8 +125,7 @@ class DepthStrategy(Protocol):
         z1: float,
         z2: float,
         barycentric: np.ndarray,
-    ) -> float:
-        ...
+    ) -> float: ...
 
 
 @runtime_checkable
@@ -133,5 +141,4 @@ class InterpolationStrategy(Protocol):
         w1: float,
         w2: float,
         barycentric: np.ndarray,
-    ) -> np.ndarray:
-        ...
+    ) -> np.ndarray: ...

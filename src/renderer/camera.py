@@ -6,7 +6,7 @@ NDC z in [-1, 1], camera looks down -Z).
 """
 
 import numpy as np
-from math3d import normalize, cross, dot
+from math3d import cross, dot, normalize
 
 
 def look_at(eye: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
@@ -46,8 +46,7 @@ def look_at(eye: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
     return m
 
 
-def perspective(fov_y_deg: float, aspect: float,
-                near: float, far: float) -> np.ndarray:
+def perspective(fov_y_deg: float, aspect: float, near: float, far: float) -> np.ndarray:
     """Create a perspective projection matrix.
 
     Uses OpenGL-style conventions: NDC z ranges from -1 to 1,
