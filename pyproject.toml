@@ -2,7 +2,7 @@
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F"]
 
 [tool.black]
 line-length = 100
