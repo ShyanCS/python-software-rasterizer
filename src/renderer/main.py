@@ -6,6 +6,7 @@ and writes output PNGs to the specified output directory.
 
 import argparse
 import glob
+import logging
 import os
 import sys
 
@@ -14,6 +15,8 @@ from scene import load_scene
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
     parser = argparse.ArgumentParser(description="CPU Software Rasterizer")
     parser.add_argument("--scene", type=str, help="Path to a specific scene JSON file to render")
     parser.add_argument(
@@ -33,19 +36,19 @@ def main():
         scene_files = sorted(glob.glob(os.path.join(scenes_dir, "*.json")))
 
     if not scene_files:
-        print("No scene files found.")
+        logging.error("No scene files found.")
         sys.exit(1)
 
-    print(f"Found {len(scene_files)} scene(s) to render.")
+    logging.info(f"Found {len(scene_files)} scene(s) to render.")
 
     for scene_file in scene_files:
         scene_name = os.path.basename(scene_file)
-        print(f"\nRendering: {scene_name}")
+        logging.info(f"Rendering: {scene_name}")
 
         scene_def = load_scene(scene_file)
         render_scene(scene_def, script_dir, output_dir)
 
-    print(f"\nAll scenes rendered successfully to {output_dir}/")
+    logging.info(f"All scenes rendered successfully to {output_dir}/")
 
 
 if __name__ == "__main__":

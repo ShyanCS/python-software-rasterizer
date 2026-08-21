@@ -7,6 +7,12 @@ import numpy as np
 from pipeline_types import CameraParameters
 
 
+class SceneLoadError(Exception):
+    """Custom exception for scene loading errors."""
+
+    pass
+
+
 class SceneMeshEntry:
     def __init__(
         self,
@@ -45,22 +51,22 @@ def load_scene(filepath: str) -> SceneDefinition:
         with open(filepath, "r") as f:
             data = json.load(f)
     except json.JSONDecodeError as e:
-        raise ValueError(f"Failed to parse JSON scene file '{filepath}': {e}")
+        raise SceneLoadError(f"Failed to parse JSON scene file '{filepath}': {e}")
     except FileNotFoundError:
-        raise ValueError(f"Scene file not found: '{filepath}'")
+        raise SceneLoadError(f"Scene file not found: '{filepath}'")
 
     if "camera" not in data:
-        raise ValueError("Scene file missing required 'camera' configuration.")
+        raise SceneLoadError("Scene file missing required 'camera' configuration.")
     if "meshes" not in data or not isinstance(data["meshes"], list):
-        raise ValueError("Scene file missing required 'meshes' array.")
+        raise SceneLoadError("Scene file missing required 'meshes' array.")
     if "output" not in data:
-        raise ValueError("Scene file missing required 'output' filename.")
+        raise SceneLoadError("Scene file missing required 'output' filename.")
 
     cam_data = data["camera"]
     required_cam_keys = ["eye", "target", "up", "fov", "near", "far", "width", "height"]
     for key in required_cam_keys:
         if key not in cam_data:
-            raise ValueError(f"Camera configuration missing required key: '{key}'")
+            raise SceneLoadError(f"Camera configuration missing required key: '{key}'")
 
     camera = CameraParameters(
         eye=np.array(cam_data["eye"], dtype=np.float64),
@@ -76,7 +82,7 @@ def load_scene(filepath: str) -> SceneDefinition:
     meshes = []
     for i, mesh_data in enumerate(data["meshes"]):
         if "obj_file" not in mesh_data:
-            raise ValueError(f"Mesh entry {i} missing required 'obj_file' path.")
+            raise SceneLoadError(f"Mesh entry {i} missing required 'obj_file' path.")
 
         entry = SceneMeshEntry(
             obj_file=mesh_data["obj_file"],

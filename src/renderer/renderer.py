@@ -3,6 +3,7 @@
 Orchestrates the full graphics pipeline.
 """
 
+import logging
 import os
 
 import numpy as np
@@ -20,6 +21,13 @@ from shaders import fragment_shading
 from texture import Texture
 from transform import build_model_matrix, viewport_transform
 from vertex import perspective_divide, vertex_processing
+
+
+class RenderError(Exception):
+    """Custom exception for rendering errors."""
+
+    pass
+
 
 # Default pipeline strategies — replace these to swap algorithms.
 _default_coverage = EdgeFunctionCoverage()
@@ -70,7 +78,7 @@ def render_scene(
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, scene.output)
     render_target.save_png(output_path)
-    print(f"  Saved: {output_path}")
+    logging.info(f"Saved: {output_path}")
 
 
 def _render_mesh(
@@ -84,7 +92,10 @@ def _render_mesh(
 ):
     """Render a single mesh entry from the scene definition."""
     obj_path = os.path.join(base_path, mesh_entry.obj_file)
-    mesh = Mesh.load_obj(obj_path)
+    try:
+        mesh = Mesh.load_obj(obj_path)
+    except Exception as e:
+        raise RenderError(f"Failed to load mesh '{obj_path}': {e}")
 
     model_matrix = build_model_matrix(mesh_entry.transform)
     mvp = mat4_multiply(view_proj, model_matrix)
@@ -92,7 +103,10 @@ def _render_mesh(
     texture = None
     if mesh_entry.texture_file:
         tex_path = os.path.join(base_path, mesh_entry.texture_file)
-        texture = Texture.load(tex_path)
+        try:
+            texture = Texture.load(tex_path)
+        except Exception as e:
+            raise RenderError(f"Failed to load texture '{tex_path}': {e}")
     elif mesh_entry.generate_texture == "checkerboard":
         texture = Texture.generate_checkerboard()
 
