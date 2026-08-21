@@ -3,7 +3,6 @@
 Orchestrates the full graphics pipeline.
 """
 
-import logging
 import os
 
 import numpy as np
@@ -12,6 +11,7 @@ from clipping import clipping
 from depth import DefaultDepthStrategy, depth_test, framebuffer_write
 from geometry import EdgeFunctionCoverage, triangle_setup
 from interpolation import DefaultInterpolationStrategy
+from logging_config import get_logger
 from math3d import mat4_multiply
 from mesh import Mesh
 from pipeline_types import RenderTarget
@@ -27,6 +27,9 @@ class RenderError(Exception):
     """Custom exception for rendering errors."""
 
     pass
+
+
+_log = get_logger("renderer")
 
 
 # Default pipeline strategies — replace these to swap algorithms.
@@ -78,7 +81,7 @@ def render_scene(
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, scene.output)
     render_target.save_png(output_path)
-    logging.info(f"Saved: {output_path}")
+    _log.info(f"scene_rendered output_path={output_path} mesh_count={len(scene.meshes)}")
 
 
 def _render_mesh(
