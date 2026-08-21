@@ -1,0 +1,32 @@
+{
+    "camera": {
+        "eye": [3.0, 2.5, 3.5],
+        "target": [0.0, 0.0, 0.0],
+        "up": [0.0, 1.0, 0.0],
+        "fov": 60,
+        "near": 0.1,
+        "far": 100.0,
+        "width": 512,
+        "height": 512
+    },
+    "meshes": [
+        {
+            "obj_file": "assets/cube.obj",
+            "transform": {
+                "translate": [-0.3, 0.0, 0.0],
+                "rotate": [15.0, 30.0, 0.0]
+            },
+            "default_color": [0.9, 0.3, 0.2]
+        },
+        {
+            "obj_file": "assets/cube.obj",
+            "transform": {
+                "translate": [0.3, 0.0, 0.0],
+                "rotate": [10.0, -20.0, 15.0]
+            },
+            "default_color": [0.2, 0.4, 0.9]
+        }
+    ],
+    "output": "overlapping_meshes.png",
+    "background": [0.1, 0.12, 0.1]
+}
